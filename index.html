@@ -1,70 +1,26 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-<meta charset="UTF-8">
-<title>HUD RPG</title>
-
-<script src="https://www.gstatic.com/charts/loader.js"></script>
-
-<style>
-body {
-    margin: 0;
-    background: transparent;
-    font-family: Arial, sans-serif;
-}
-
-.nome {
-    color: #ff0033;
-    font-size: 28px;
-    text-shadow: 0 0 12px #ff0033;
-}
-
-.pv {
-    color: #ff0033;
-    font-size: 22px;
-    text-shadow: 0 0 10px #ff0033;
-}
-
-.pd {
-    color: #00ccff;
-    font-size: 22px;
-    text-shadow: 0 0 10px #00ccff;
-}
-</style>
-</head>
-
-<body>
-<div class="nome" id="nome">---</div>
-<div class="pv">PV: <span id="pv">-- / --</span></div>
-<div class="pd">PD: <span id="pd">-- / --</span></div>
-
 <script>
-google.charts.load('current', {packages: ['corechart']});
-google.charts.setOnLoadCallback(atualizar);
+  const URL =
+    "https://opensheet.elk.sh/1PivAa39Or0BzHQB-AlOX_sFPaeFDDgx2VGOET9eFYcs/Página1";
 
-function atualizar() {
-    const query = new google.visualization.Query(
-        "https://docs.google.com/spreadsheets/d/e/2PACX-1vT2dq6ZPICnv-yRf3bATaF7jklzwwYqpVGOKRJ3KujpXfFvorjl1Oa5pDrG_yDXUHRt0N0jbsQR_Agz/pub?output=csv"
-    );
+  async function carregar() {
+    try {
+      const res = await fetch(URL + "?t=" + Date.now());
+      const dados = await res.json();
 
-    query.send(response => {
-        if (response.isError()) return;
+      if (!dados.length) return;
 
-        const data = response.getDataTable();
+      const p = dados[0];
 
-        document.getElementById("nome").innerText =
-            data.getValue(0, 0);
+      document.getElementById("nome").textContent = p.nome;
+      document.getElementById("pv").textContent =
+        `PV ${p.pv_atual} / ${p.pv_max}`;
+      document.getElementById("pd").textContent =
+        `PD ${p.pd_atual} / ${p.pd_max}`;
+    } catch (e) {
+      console.error(e);
+    }
+  }
 
-        document.getElementById("pv").innerText =
-            data.getValue(0, 1) + " / " + data.getValue(0, 2);
-
-        document.getElementById("pd").innerText =
-            data.getValue(0, 3) + " / " + data.getValue(0, 4);
-    });
-}
-
-setInterval(atualizar, 2000);
+  carregar();
+  setInterval(carregar, 5000);
 </script>
-</body>
-</html>
-
