@@ -1,28 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+
+<style>
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  background: transparent;
+  font-family: 'Montserrat', Arial, sans-serif;
+}
+
+.hud {
+  padding: 10px;
+}
+
+.nome {
+  color: #ff1a1a;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-shadow: 0 0 4px #ff1a1a, 0 0 10px #b30000;
+}
+
+.pv {
+  color: #ff1a1a;
+  font-size: 16px;
+  text-shadow: 0 0 3px #ff1a1a;
+}
+
+.pd {
+  color: #3fa9ff;
+  font-size: 16px;
+  text-shadow: 0 0 3px #3fa9ff;
+}
+</style>
+</head>
+
+<body>
+
+<div class="hud">
+  <div class="nome" id="nome">---</div>
+  <div class="pv" id="pv">PV: -- / --</div>
+  <div class="pd" id="pd">PD: --</div>
+</div>
+
 <script>
-  const URL =
-    "https://opensheet.elk.sh/1PivAa39Or0BzHQB-AlOX_sFPaeFDDgx2VGOET9eFYcs/Página1
-";
+const PLANILHA_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT2dq6ZPICnv-yRf3bATaF7jklzwwYqpVGOKRJ3KujpXfFvorjl1Oa5pDrG_yDXUHRt0N0jbsQR_Agz/pub?output=csv";
 
-  async function carregar() {
-    try {
-      const res = await fetch(URL + "?t=" + Date.now());
-      const dados = await res.json();
+fetch(PLANILHA_CSV)
+  .then(res => res.text())
+  .then(text => {
+    const linhas = text.trim().split("\n");
+    const dados = linhas[1].split(",");
 
-      if (!dados.length) return;
+    const nome = dados[0];
+    const pvAtual = dados[1];
+    const pvMax = dados[2];
+    const pd = dados[3];
 
-      const p = dados[0];
-
-      document.getElementById("nome").textContent = p.nome;
-      document.getElementById("pv").textContent =
-        `PV ${p.pv_atual} / ${p.pv_max}`;
-      document.getElementById("pd").textContent =
-        `PD ${p.pd_atual} / ${p.pd_max}`;
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
-  carregar();
-  setInterval(carregar, 5000);
+    document.getElementById("nome").innerText = nome;
+    document.getElementById("pv").innerText = `PV: ${pvAtual} / ${pvMax}`;
+    document.getElementById("pd").innerText = `PD: ${pd}`;
+  });
 </script>
 
+</body>
+</html>
